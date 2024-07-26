@@ -6,10 +6,19 @@ class Constants:
 
 
 class APICourierUrls:
-    COURIER_LOGIN_URL = '/api/v1/courier/login'
     CREATING_COURIER_URL = '/api/v1/courier/'
+    COURIER_LOGIN_URL = '/api/v1/courier/login'
     DELETE_COURIER_URL = '/api/v1/courier/'
 
+class APICourierResponseTexts:
+    CREATING_COURIER_ALREADY_EXISTS_ERROR = 'Этот логин уже используется'
+    CREATING_COURIER_NO_REQUIRED_FIELD_ERROR = 'Недостаточно данных для создания учетной записи'
+
+    COURIER_LOGIN_WRONG_LOGIN_PASS_ERROR = 'Учетная запись не найдена'
+    COURIER_LOGIN_NO_LOGIN_PASS_ERROR = 'Недостаточно данных для входа'
+
+    DELETE_COURIER_NO_ID_ERROR = 'Недостаточно данных для удаления курьера'
+    DELETE_COURIER_NON_EXISTENT_ID_ERROR = 'Курьера с таким id нет'
 
 class APIOrdersUrls:
     CREATING_ORDER_URL = '/api/v1/orders'
@@ -17,6 +26,13 @@ class APIOrdersUrls:
     ACCEPT_ORDER_URL = '/api/v1/orders/accept/'
     RECEIVE_ORDER_BY_NUMBER_URL = '/api/v1/orders/track?t='
 
+class APIOrdersResponseTexts:
+    ACCEPT_ORDER_WITHOUT_COURIER_OR_ORDER_ID_ERROR = 'Недостаточно данных для поиска'
+    ACCEPT_ORDER_NON_EXISTENT_COURIER_ID_ERROR = 'Курьера с таким id не существует'
+    ACCEPT_ORDER_NON_EXISTENT_ORDER_ID_ERROR = 'Заказа с таким id не существует'
+
+    RECEIVE_ORDER_BY_NUMBER_WITHOUT_TRACK_ERROR = 'Недостаточно данных для поиска'
+    RECEIVE_ORDER_BY_NUMBER_NON_EXISTENT_TRACK_ERROR = 'Заказ не найден'
 
 class OrdersData:
     TODAY = datetime.date.today()

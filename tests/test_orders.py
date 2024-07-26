@@ -2,7 +2,7 @@ import json
 import pytest
 import allure
 import requests
-from data import Constants, APIOrdersUrls, OrdersData, APICourierUrls
+from data import Constants, APIOrdersUrls, OrdersData, APICourierUrls, APIOrdersResponseTexts
 from conftest import reg_new_courier_return_login_pass_del_this_courier
 from generator import creating_new_order
 
@@ -53,7 +53,7 @@ class TestAcceptOrder:
         order = requests.get(Constants.MAIN_URL + APIOrdersUrls.RECEIVE_ORDER_BY_NUMBER_URL + str(track))
         order_id = order.json()['order']['id']
         response = requests.put(Constants.MAIN_URL + APIOrdersUrls.ACCEPT_ORDER_URL + str(order_id) + '?courierId=')
-        assert response.status_code == 400 and response.json()["message"] == 'Недостаточно данных для поиска'
+        assert response.status_code == 400 and response.json()["message"] == APIOrdersResponseTexts.ACCEPT_ORDER_WITHOUT_COURIER_OR_ORDER_ID_ERROR
 
     @allure.title('Проверка принятия заказа без указания id заказа')
     @allure.description('Если не передать id заказа, запрос вернёт ошибку')
@@ -63,7 +63,7 @@ class TestAcceptOrder:
         courier_login_in = requests.post(Constants.MAIN_URL + APICourierUrls.COURIER_LOGIN_URL, data=payload)
         courier_id = courier_login_in.json()['id']
         response = requests.put(Constants.MAIN_URL + APIOrdersUrls.ACCEPT_ORDER_URL + '?courierId=' + str(courier_id))
-        assert response.status_code == 400 and response.json()["message"] == 'Недостаточно данных для поиска'
+        assert response.status_code == 400 and response.json()["message"] == APIOrdersResponseTexts.ACCEPT_ORDER_WITHOUT_COURIER_OR_ORDER_ID_ERROR
 
     @allure.title('Проверка принятия заказа с передачей неверного id курьера')
     @allure.description('Если передать неверный id курьера, запрос вернёт ошибку')
@@ -76,7 +76,7 @@ class TestAcceptOrder:
         order = requests.get(Constants.MAIN_URL + APIOrdersUrls.RECEIVE_ORDER_BY_NUMBER_URL + str(track))
         order_id = order.json()['order']['id']
         response = requests.put(Constants.MAIN_URL + APIOrdersUrls.ACCEPT_ORDER_URL + str(order_id) + '?courierId=' + str(courier_id))
-        assert response.status_code == 404 and response.json()["message"] == 'Курьера с таким id не существует'
+        assert response.status_code == 404 and response.json()["message"] == APIOrdersResponseTexts.ACCEPT_ORDER_NON_EXISTENT_COURIER_ID_ERROR
 
     @allure.title('Проверка принятия заказа с передачей неверного id заказа')
     @allure.description('Если передать неверный id заказа, запрос вернёт ошибку')
@@ -89,7 +89,7 @@ class TestAcceptOrder:
         order = requests.get(Constants.MAIN_URL + APIOrdersUrls.RECEIVE_ORDER_BY_NUMBER_URL + str(track))
         order_id = order.json()['order']['id'] + 123456
         response = requests.put(Constants.MAIN_URL + APIOrdersUrls.ACCEPT_ORDER_URL + str(order_id) + '?courierId=' + str(courier_id))
-        assert response.status_code == 404 and response.json()["message"] == 'Заказа с таким id не существует'
+        assert response.status_code == 404 and response.json()["message"] == APIOrdersResponseTexts.ACCEPT_ORDER_NON_EXISTENT_ORDER_ID_ERROR
 
 
 @allure.epic('test_receive_order_by_number')
@@ -106,11 +106,11 @@ class TestReceiveOrderByNumber:
     @allure.description('Запрос без номера заказа возвращает ошибку')
     def test_receive_order_by_number_without_track_error_message(self):
         response = requests.get(Constants.MAIN_URL + APIOrdersUrls.RECEIVE_ORDER_BY_NUMBER_URL)
-        assert response.status_code == 400 and response.json()["message"] == 'Недостаточно данных для поиска'
+        assert response.status_code == 400 and response.json()["message"] == APIOrdersResponseTexts.RECEIVE_ORDER_BY_NUMBER_WITHOUT_TRACK_ERROR
 
     @allure.title('Проверка получения заказа по его номеру, с указанием несуществующего номера')
     @allure.description('Запрос с несуществующим номером заказа возвращает ошибку')
     def test_receive_order_by_number_non_existent_track_error_message(self):
         track = creating_new_order() + 123456789
         response = requests.get(Constants.MAIN_URL + APIOrdersUrls.RECEIVE_ORDER_BY_NUMBER_URL + str(track))
-        assert response.status_code == 404 and response.json()["message"] == 'Заказ не найден'
+        assert response.status_code == 404 and response.json()["message"] == APIOrdersResponseTexts.RECEIVE_ORDER_BY_NUMBER_NON_EXISTENT_TRACK_ERROR

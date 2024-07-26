@@ -1,10 +1,12 @@
 import json
+import allure
 import requests
 import random
 import string
 from data import Constants, APICourierUrls, APIOrdersUrls, OrdersData
 
 
+@allure.step('Зарегистрировать нового курьера и вернуть его login, password и first_name')
 def register_new_courier_and_return_login_password():
     def generate_random_string(length):
         letters = string.ascii_lowercase
@@ -22,6 +24,7 @@ def register_new_courier_and_return_login_password():
         login_pass.append(first_name)
     return response, login_pass
 
+@allure.step('Создать новый заказ и вернуть его track')
 def creating_new_order():
     payload = json.dumps(OrdersData.ORDER_FORM)
     response = requests.post(Constants.MAIN_URL + APIOrdersUrls.CREATING_ORDER_URL, data=payload)
